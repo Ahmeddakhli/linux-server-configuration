@@ -34,7 +34,7 @@ There are several ways that this could have been done.  Here I tried to
 follow the class instructions as closely as possible.
 1. Create a new user named grader:
   - Enter: `sudo adduser grader`
-  - Give grader a password of: `2680259`
+  - Give grader a password of: `123456`
   - Install finger: `apt-get install finger`
   - Check grader account with finger: `finger grader`
 2. Give the grader the permission to sudo:
@@ -45,10 +45,8 @@ follow the class instructions as closely as possible.
     when the cloud instance of Ubuntu is built.
 3. Create SSH keys and copy the public key to the server manually:
   - On your local machine generate SSH key pair with: `ssh-keygen`
-  - I added a passphrase for security: `2680259`
-  - Save the public and private SSH keys in in the default SSH directory: `C:\Users\Mohamed\.ssh`  (in my case.)
-  - My public and private key files are: `mo.pub` and `mo`
-  - Login into grader account using password set during user creation: `ssh grader@54.190.10.86 -p 2200`
+  - My public and private key files are: `uuu.pub` and `uuu`
+  - Login into grader account using password set during user creation: `ssh grader@52.62.83.231 -p 2200`
   - Make .ssh directory: `mkdir .ssh`
   - Make file to store public key: `touch .ssh/authorized_keys`
   - On your local machine read and copy contents of the public key: `cat ~/.ssh/mo.pub` then
@@ -65,7 +63,7 @@ follow the class instructions as closely as possible.
 Here we install the Apache web server and make sure the default Apache web page can be
 accessed on port 80.  The Apache and wsgi configurations are then added using these steps:
 1. Install Apache web server: `sudo apt-get install apache2`
-  - Check port 80 with the public IP address given above: `54.190.10.86`.
+  - Check port 80 with the public IP address given above: `52.62.83.231`.
 2. Install mod_wsgi: `sudo apt-get install libapache2-mod-wsgi`
   - Configure Apache to handle requests using the WSGI module: `sudo nano /etc/apache2/sites-enabled/000-default.conf`
   - Add: `WSGIScriptAlias / /var/www/html/myapp.wsgi` before `</VirtualHost>` closing line
@@ -91,7 +89,7 @@ the catalog database from SQLite to PostgreSQL.
   - `\q`
   - `exit`
 2. After you have installed the catalog app below, make sure that you:
-  - Change create engine line in your `__init__.py` and `models.py` to:
+  - Change create engine line in your `__init__.py` and `database_setup.py` to:
     `engine = create_engine('postgresql://catalog:password@localhost/catalog')`
   - Make sure no remote connections to the database are allowed: `sudo nano /etc/postgresql/9.5/main/pg_hba.conf`
     Should produce output that looks like this:
@@ -166,13 +164,10 @@ application.secret_key = 'lees_secret_key'
   ServerAdmin ljfarre@att.net
   WSGIScriptAlias / /var/www/catalog/catalog.wsgi
   <Directory /var/www/catalog/catalog/>
-  Order allow,deny
-  Allow from all
+  Require all granted
   </Directory>
-  Alias /static /var/www/catalog/catalog/static
-  <Directory /var/www/catalog/catalog/static/>
-  Order allow,deny
-  Allow from all
+  <Directory /var/www/catalog/catalog/vagrant/static/>
+  Require all granted
   </Directory>
   ErrorLog ${APACHE_LOG_DIR}/error.log
   LogLevel warn
